@@ -12,13 +12,53 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+// ItemStack blackDye = new ItemStack(Item.dyePowder, 1, 0)
+
+
 public class RegisterRecipe 
 {
+	private ItemStack GetItemStack( String parseName )
+	{
+		// Wrapper that returns an item stack of 1 
+		return GetItemStack( parseName, 1 );
+	}
+	private ItemStack GetItemStack( String parseName, int count )
+	{  
+		// main 'get item stack' function.
+		// This should be able to parse out any sub numbers (e.g 'dye.15' for bonemeal'
+		
+		System.out.println( "GetItemStack parseName   " + parseName );
+		System.out.println( "GetItemStack count       " + count );
+		System.out.println( "........................");
+
+		
+		if( parseName.contains(".") )
+		{
+			//System.out.println( "Contains a dot");
+			//System.out.println( "parseName     " + parseName );
+			String[] parts;
+			parts = parseName.split("\\.");
+			//System.out.println( parts );
+			//System.out.println(parts.length);
+			//System.out.println(parts[0]);
+			int subtype = Integer.parseInt(parts[1]);
+			System.out.println( "GetItemStack name        " + parts[0] );
+			System.out.println( "GetItemStack count       " + subtype );
+			return new ItemStack( GameRegistry.findItem("minecraft", parts[0]), count, subtype ) ;
+		}
+		else
+		{
+			return new ItemStack( GameRegistry.findItem("minecraft", parseName ), count ) ;			
+		}
+
+	}
+	
 	public void init()
 	{
 	}
 	public void Register( File file )
-	{
+	{ 
+		// This is the main function for this class, used to register a recipe.
 		Recipe recipe = new Recipe();
 		try 
 		{
@@ -50,40 +90,25 @@ public class RegisterRecipe
   }
 
 	private void grid3( Recipe recipe )
-	{		
-		System.out.println( "----------------trbdk3----------------" );
-
-		System.out.println("line a " + recipe.lineA);
-		System.out.println("line b " + recipe.lineB);
-		System.out.println("line c " + recipe.lineC);   		
-		System.out.println("input items " + recipe.inputItems);
-		System.out.println("input item Association " + recipe.inputAssociation);
-
-		
-		System.out.println( "----------------trbdk3----------------" );
-
-
-		ItemStack Output = new ItemStack( GameRegistry.findItem("minecraft",recipe.output ), recipe.outputCount  );
+	{	
+		// Register a 3x3 grid recipe.
+		// Supports up to 4 different ingredients. 
+		ItemStack Output = GetItemStack(recipe.output, recipe.outputCount );
 		System.out.println( "output item stack" + Output );
-
-		
-		Item itemA;
+		ItemStack itemA;
 		char assocA;
-		Item itemB;
+		ItemStack itemB;
 		char assocB;
-		Item itemC;
+		ItemStack itemC;
 		char assocC;
-		Item itemD;
+		ItemStack itemD;
 		char assocD;
-		Item itemE;
-		char assocE;
 		
 		switch ( recipe.inputItems.size() )
 		{
 		case 1:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-	    	assocA = recipe.assc(0);
-	    	
+	    	itemA = GetItemStack(recipe.inputItems.get(0));
+	    	assocA = recipe.assc(0);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -93,11 +118,10 @@ public class RegisterRecipe
 					);
 			break;
 		case 2:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0));
 	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
-	    	assocB = recipe.assc(1);        	
-	    	
+	    	itemB = GetItemStack(recipe.inputItems.get(1));
+	    	assocB = recipe.assc(1);        		    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -108,13 +132,12 @@ public class RegisterRecipe
 					);
 			break;
 		case 3:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack( recipe.inputItems.get(0));
 	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
+	    	itemB = GetItemStack( recipe.inputItems.get(1));
 	    	assocB = recipe.assc(1);
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
-	    	assocC = recipe.assc(2);
-	    	
+	    	itemC = GetItemStack( recipe.inputItems.get(2));
+	    	assocC = recipe.assc(2);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -126,15 +149,14 @@ public class RegisterRecipe
 					);
 			break;
 		case 4:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack( recipe.inputItems.get(0));
 	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
+	    	itemB = GetItemStack( recipe.inputItems.get(1));
 	    	assocB = recipe.assc(1);
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
+	    	itemC = GetItemStack( recipe.inputItems.get(2));
 	    	assocC = recipe.assc(2);
-	    	itemD= GameRegistry.findItem("minecraft", recipe.inputItems.get(3) );
-	    	assocD = recipe.assc(3);
-	    	
+	    	itemD= GetItemStack( recipe.inputItems.get(3));
+	    	assocD = recipe.assc(3);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -145,67 +167,34 @@ public class RegisterRecipe
 	    	    	assocC, itemC,        	    	
 	    	    	assocD, itemD        	    	
 					);
-			break;
-		case 5:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
-	    	assocB = recipe.assc(1);
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
-	    	assocC = recipe.assc(2);
-	    	itemD= GameRegistry.findItem("minecraft", recipe.inputItems.get(3) );
-	    	assocD = recipe.assc(3);
-	    	itemE= GameRegistry.findItem("minecraft", recipe.inputItems.get(4) );
-	    	assocE = recipe.assc(4);
-	    	
-	    	GameRegistry.addRecipe(
-	    			Output ,
-	    	    	recipe.lineA,
-	    	    	recipe.lineB,
-	    	    	recipe.lineC,
-	    	    	assocA, itemA,
-	    	    	assocB, itemB,
-	    	    	assocC, itemC,        	    	
-	    	    	assocD, itemD,        	    	
-	    	    	assocE, itemE        	    	
-					);
-			break;
-		
-		
+			break;		
 	}
 		
 	}
 	private void grid2( Recipe recipe )
 	{
-		System.out.println( "----------------trbdk3----------------" );
-		System.out.println("line a " + recipe.lineA);
-		System.out.println("line b " + recipe.lineB);
-		System.out.println("input items " + recipe.inputItems);
-		System.out.println("input item Association " + recipe.inputAssociation);		
-		System.out.println( "----------------trbdk3----------------" );
-
-
-		ItemStack Output = new ItemStack( GameRegistry.findItem("minecraft",recipe.output ), recipe.outputCount  );
-		System.out.println( "output item stack" + Output );
-
-		
-		Item itemA;
+		// Register a 2x2 grid recipe. 
+		// Supports up to 4 different ingredients
+		System.out.println( "grid2");
+		System.out.println( "Output");
+		ItemStack Output = GetItemStack( recipe.output, recipe.outputCount  );
+		System.out.println( "/Output");
+		ItemStack itemA;
 		char assocA;
-		Item itemB;
+		ItemStack itemB;
 		char assocB;
-		Item itemC;
+		ItemStack itemC;
 		char assocC;
-		Item itemD;
+		ItemStack itemD;
 		char assocD;
-		Item itemE;
+		ItemStack itemE;
 		char assocE;
 		
 		switch ( recipe.inputItems.size() )
 		{
 		case 1:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-	    	assocA = recipe.assc(0);
-	    	
+	    	itemA = GetItemStack( recipe.inputItems.get(0));
+	    	assocA = recipe.assc(0);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -214,11 +203,10 @@ public class RegisterRecipe
 					);
 			break;
 		case 2:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0));
 	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
-	    	assocB = recipe.assc(1);        	
-	    	
+	    	itemB = GetItemStack(recipe.inputItems.get(1));
+	    	assocB = recipe.assc(1);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -228,13 +216,12 @@ public class RegisterRecipe
 					);
 			break;
 		case 3:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0));
 	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
+	    	itemB = GetItemStack(recipe.inputItems.get(1));
 	    	assocB = recipe.assc(1);
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
-	    	assocC = recipe.assc(2);
-	    	
+	    	itemC = GetItemStack(recipe.inputItems.get(2));
+	    	assocC = recipe.assc(2);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -245,15 +232,14 @@ public class RegisterRecipe
 					);
 			break;
 		case 4:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0));
 	    	assocA = recipe.assc(0);
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
+	    	itemB = GetItemStack(recipe.inputItems.get(1));
 	    	assocB = recipe.assc(1);
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
+	    	itemC = GetItemStack(recipe.inputItems.get(2));
 	    	assocC = recipe.assc(2);
-	    	itemD= GameRegistry.findItem("minecraft", recipe.inputItems.get(3) );
-	    	assocD = recipe.assc(3);
-	    	
+	    	itemD=GetItemStack(recipe.inputItems.get(3));
+	    	assocD = recipe.assc(3);	    	
 	    	GameRegistry.addRecipe(
 	    			Output ,
 	    	    	recipe.lineA,
@@ -269,59 +255,48 @@ public class RegisterRecipe
 	}
 	private void shapeless( Recipe recipe )
 	{
-		//GameRegistry.addShapelessRecipe(new ItemStack(Blocks.bedrock), Items.diamond, Items.lava_bucket, new ItemStack(Blocks.wool, 1, 2));
-		ItemStack Output = new ItemStack( GameRegistry.findItem("minecraft",recipe.output ), recipe.outputCount  );
+		// register a shapless recipe.
+		// Supports up to 4 ingredients
+		ItemStack Output = GetItemStack( recipe.output, recipe.outputCount  );
 		
-		System.out.println( "----------------trbdk3----------------" );
-		System.out.println("input items " + recipe.inputItems);
-		System.out.println("input item Association " + recipe.inputAssociation);		
-		System.out.println( "----------------trbdk3----------------" );
-		System.out.println( "output item stack" + Output );
-
-		
-		Item itemA;
-		Item itemB;
-		Item itemC;
-		Item itemD;
-		Item itemE;
+		ItemStack itemA;
+		ItemStack itemB;
+		ItemStack itemC;
+		ItemStack itemD;
 		
 		switch ( recipe.inputItems.size() )
 		{
 		case 1:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
+	    	itemA = GetItemStack( recipe.inputItems.get(0) );
 	    	GameRegistry.addShapelessRecipe( Output, itemA );
 			break;
 		case 2:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0) );
+	    	itemB = GetItemStack(recipe.inputItems.get(1) );
 	    	GameRegistry.addShapelessRecipe( Output, itemA, itemB );
 	    	break;
 		case 3:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0) );
+	    	itemB = GetItemStack(recipe.inputItems.get(1) );
+	    	itemC = GetItemStack(recipe.inputItems.get(2) );
 	    	GameRegistry.addShapelessRecipe( Output, itemA, itemB, itemC );
 	    	break;
 		case 4:
-	    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-	    	itemB = GameRegistry.findItem("minecraft", recipe.inputItems.get(1) );
-	    	itemC = GameRegistry.findItem("minecraft", recipe.inputItems.get(2) );
-	    	itemD= GameRegistry.findItem("minecraft", recipe.inputItems.get(3) );
+	    	itemA = GetItemStack(recipe.inputItems.get(0) );
+	    	itemB = GetItemStack(recipe.inputItems.get(1) );
+	    	itemC = GetItemStack(recipe.inputItems.get(2) );
+	    	itemD= GetItemStack(recipe.inputItems.get(3) );
 	    	GameRegistry.addShapelessRecipe( Output, itemA, itemB, itemC, itemD );
 			break;
-		}
-		
+		}		
 	}
 	private void smelting( Recipe recipe )
 	{
-//		GameRegistry.findBlock(modId, name)
-		
-//		GameRegistry.addSmelting(Blocks.obsidian, new ItemStack(Items.diamond, 2), 1F);		
-		ItemStack Output = new ItemStack( GameRegistry.findItem("minecraft",recipe.output ), recipe.outputCount  );
-		Item itemA;
-    	itemA = GameRegistry.findItem("minecraft", recipe.inputItems.get(0) );
-		System.out.println( "output item stack" + Output );
+		ItemStack Output = GetItemStack( recipe.output, recipe.outputCount  );
+		ItemStack itemA;
+    	itemA = GetItemStack( recipe.inputItems.get(0) );
 		GameRegistry.addSmelting(itemA, Output, 1F);		
 	}
+    
 }
 
